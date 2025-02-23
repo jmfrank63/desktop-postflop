@@ -3,30 +3,18 @@
     <div v-if="!results.isEmpty" class="flex flex-col h-full" style="flex: 4">
       <div class="w-full px-4 pt-4 pb-2" style="flex: 7">
         <div class="relative h-full">
-          <LineChart
-            class="absolute left-0 top-0 w-full h-full"
-            :data="chartData"
-            :options="chartOptions"
-            :plugins="[verticalLinePlugin]"
-            @mouseleave="tableScrollTarget = null"
-          />
+          <LineChart class="absolute left-0 top-0 w-full h-full" :data="chartData" :options="chartOptions"
+            :plugins="[verticalLinePlugin]" @mouseleave="tableScrollTarget = null" />
         </div>
       </div>
 
       <div class="relative mx-4 mt-6 mb-8" style="flex: 2">
-        <div
-          v-if="displayPlayer === ['', 'oop', 'ip'][playerIndex + 1]"
-          class="absolute flex left-[3.25rem] top-0 h-full"
-          :style="{ width: `${chartWidth}px` }"
-          @mouseleave="tableScrollTarget = null"
-        >
-          <div
-            v-for="(item, i) in strategyItems"
-            :key="i"
-            class="hover:brightness-75"
+        <div v-if="displayPlayer === ['', 'oop', 'ip'][playerIndex + 1]"
+          class="absolute flex left-[3.25rem] top-0 h-full" :style="{ width: `${chartWidth}px` }"
+          @mouseleave="tableScrollTarget = null">
+          <div v-for="(item, i) in strategyItems" :key="i" class="hover:brightness-75"
             :style="{ flex: item.weight, 'background-image': item.bgImage }"
-            @mouseover="tableScrollTarget = item.cards"
-          ></div>
+            @mouseover="tableScrollTarget = item.cards"></div>
         </div>
       </div>
     </div>
@@ -35,16 +23,9 @@
       Graphs not available
     </div>
 
-    <ResultTable
-      style="flex: 3"
-      table-mode="graphs"
-      :graph-type="displayOptions.contentGraphs"
-      :cards="cards"
-      :selected-spot="selectedSpot"
-      :results="results"
-      :display-player="displayPlayer"
-      :scroll-target="tableScrollTarget"
-    />
+    <ResultTable style="flex: 3" table-mode="graphs" :graph-type="displayOptions.contentGraphs" :cards="cards"
+      :selected-spot="selectedSpot" :results="results" :display-player="displayPlayer"
+      :scroll-target="tableScrollTarget" />
   </div>
 </template>
 
@@ -259,7 +240,14 @@ const chartOptions = computed((): ChartOptions<"line"> => {
     scales: {
       x: {
         type: "linear",
-        ticks: { format: formatX },
+        ticks: {
+          callback: (value) => {
+            return new Intl.NumberFormat(undefined, {
+              style: "percent",
+              minimumFractionDigits: 0,
+            }).format(Number(value));
+          }
+        },
         afterFit(axis) {
           chartWidth.value = axis.width;
         },
@@ -269,7 +257,13 @@ const chartOptions = computed((): ChartOptions<"line"> => {
         max: content === "eq" ? 1 : undefined,
         suggestedMin: content === "ev" ? 0 : undefined,
         ticks: {
-          format: formatY,
+          callback: (value) => {
+            return new Intl.NumberFormat(undefined, {
+              style: styleY as "percent" | "decimal" | "currency" | "unit",
+              useGrouping: false,
+              minimumFractionDigits: 0,
+            }).format(Number(value));
+          }
         },
         afterFit(axis) {
           axis.width = 52;
