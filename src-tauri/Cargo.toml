@@ -11,15 +11,18 @@ rust-version = "1.65"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.5.0", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
 serde_json = "1.0.107"
 serde = { version = "1.0.188", features = ["derive"] }
-tauri = { version = "1.5.0", features = ["dialog-open", "dialog-save", "fs-read-file", "fs-write-file", "shell-open"] }
-postflop-solver = { git = "https://github.com/b-inary/postflop-solver", features = ["custom-alloc"] }
+tauri = { version = "2.2.5", features = [] }
+postflop-solver = { path = "../../postflop-solver", features = ["custom-alloc"] }
 rayon = "1.8.0"
-sysinfo = "0.29.10"
+sysinfo = "0.33.1"
+tauri-plugin-dialog = "2.2.0"
+tauri-plugin-shell = "2.2.0"
+tauri-plugin-fs = "2.2.0"
 
 [features]
 # by default Tauri runs in production mode
@@ -33,3 +36,7 @@ custom-protocol = [ "tauri/custom-protocol" ]
 codegen-units = 1
 panic = "abort"
 strip = true
+
+[lib]
+name = "app_lib"
+# crate-type = ["staticlib", "cdylib", "rlib", "lib"]
